@@ -1,0 +1,74 @@
+.TH aln2pattern 1  "v2; Apr 29, 2007" 
+.SH NAME
+
+aln2pattern - Generate search patterns for fragrep from annotated
+mutliple sequence alignment
+
+.SH SYNOPSIS
+.B aln2pattern [\-m] <alignment file>
+
+.SH DESCRIPTION
+
+aln2pattern reads ClustalW formatted alignment files. One sequence in
+the alignment is required to be named FRAGREP, consisting of gap ('-')
+and '*' entries only. Subsequent columns marked by '*' are interpreted
+as one conserved fragment, and lower and upper bounds for the gap
+length in between those fragments are determined for the search
+pattern. Blocks marked as conserved should contain few deletions only
+(not more than 1 del per 5 nucleotides in each of the sequences, as a
+rule of thumb).
+
+The search pattern generated is the least restricted pattern that
+produces a match for each of the sequences given in the alignment.
+
+.SH OPTIONS
+.TP
+\-m create position weight matrix based patterns (recommended)
+
+.SH OUTPUT
+
+Output is written to stdout and can be piped into a pattern
+file. Furthermore, a graphical representation of the search pattern is
+written into the file aln2pattern.eps; aln2pattern.anchor contains the
+anchor points of the conserved blocks (which can be used by programs
+such as dialign), ans aln2pattern.mfa contains the fasta formatted
+sequences contained in the multiple seuqence alignment.
+
+In a typical workflow, the pattern file will be manually edited,
+e.g. in order to allow more fault tolerance by higher deletion or
+match thresholds, or more relaxed distance constraints between the
+fragments. Any valid search pattern can be visualized using the
+pattern2eps tool, which takes the pattern file as its only input
+parameter.
+
+.SH EXAMPLE ALIGNMENT FILE
+
+CLUSTAL
+
+
+Typh_n_terc     --------CTCGCTGTTTT-CTCAG--AGGGC-TCCATCTCTGTCCC------
+Chin_b_terc     --------CGCGCTGTTTTTCTC---AAAAGCCCC-ATCTCTGTCCG------
+Dasy_s_terc     --GGAGCCCTCGCTGTTTTCTTTGGCGA-----CTTGTCTCTGTT--------
+Rhin_b_terc     CGGGAGCCCTCGCTGTTTTCTTTG----AAGG-CTTGT-TCTGTC--------
+Rhiz_p_terc     ---GAAACCTCGCTGTTTTCTT-GAGGCAAGGCCCCAGCTCTGTCCCGGGTGG
+FRAGREP         ----------************--------------*********--------
+
+.PP
+
+
+.SH SEE ALSO
+
+fragrep, pattern2eps
+
+.SH AUTHORS
+Axel Mosig, CAS-MPG Partner Institute for Computational Biology,
+Shanghai, China
+
+Peter F. Stadler, Katrin Sameith, Bioinformatics Group,
+University of Leipzig, Germany. 
+
+Email:axel (at) picb.ac.cn
+
+.SH URL
+www.bioinf.uni-leipzig.de/Software/fragrep
+

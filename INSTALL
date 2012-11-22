@@ -1,0 +1,22 @@
+Deflate the tarball by typing
+
+  tar xzf fragrep-2.tar.gz
+
+Then, type 
+
+  cd fragrep2
+  make release
+
+in the directory containing all fragrep files. Refer to the
+manpage (fragrep.1) for
+further instructions.
+
+To make the man page available via the man command, copy fragrep.1 to
+
+  /usr/local/man/man1
+
+or any other directory contained in your $MANPATH directory.
+
+fragrep has been implemented in C++ using gcc Version 4.0.1. 
+
+

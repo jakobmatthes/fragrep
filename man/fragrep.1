@@ -1,0 +1,122 @@
+.TH fragrep 1  "v2; Apr 29, 2007" 
+.SH NAME
+fragrep \- Efficient Search for Fragemented Patterns in 
+       Genomic Sequences
+.SH SYNOPSIS
+.B fragrep [\-r \-s \-S \-w] patternfile [genomefile]
+
+
+Use fragrep as follows:
+
+fragrep [options] <motif-file> [<genome-file>],
+
+where <motif-file> is a filename as well as <genome-file>.
+if <genome-file> is not specified, stdin is read instead, which is expected to be in fasta format.
+valid options are:
+
+
+
+.SH DESCRIPTION
+fragrep implements an efficient algorithm for detecting nucleotide
+pattern fragments in genomes that occur in a given order. For each
+pattern a tolerance can be specified separately; conserved fragments
+can be modelled either as IUPAC coded consensus sequences or position
+weight matrices.
+
+.PP
+
+.SH GENOME AND PATTERN FILE FORMATS
+
+The genome file must be in fasta format and may contain more than one
+sequence. If genomefile is not specified as a parameter, the sequence
+is read from stdin (also expected to be in fasta format). Matches will
+be marked with the corresponding input sequence's name in the output.
+
+While patterns based on position weight matrices are recommended to be
+obtained from an annotated multiple sequence alignment using the
+aln2pattern tool, IUPAC consensus sequence based pattern files can
+easily be handcoded using the following format:
+
+  N
+  0   0  <fragment1>   m1
+  l2  u2 <fragment2>   m2
+
+  lN  uN <fragmentN>   mN
+
+The first value N denotes the number of fragments.  The first two
+columns of all other lines contain the minimal and maximal distance
+before a the pattern fragment (always 0 for the first fragment, of
+course), the last column is the maximal number of mismatches that is
+tolerated in each fragment. fragment1, ..., fragmentN are words over
+the 16-letter fasta alphabet for nucleic acids:
+
+   A - adenosine 
+   C - cytidine 
+   G - guanine 
+   T - thymidine	  
+   U - uridine 
+   M - A C 
+   W - A T 
+   B - G T C
+   S - G C 
+   D - G A T
+   R - G A 
+   H - A C T
+   Y - T C 
+   V - G C A
+   K - G T 
+   N - A G C T 
+
+.SH OUTPUT FILE FORMAT
+
+The output is written in fasta format to stdout. Output can be written
+to a file using pipes (e.g., fragrep test.pat test.fa >
+output.fa). Each match produces two fasta sequences, the matching part
+from the genome sequence and and annotation of the matching fragments.
+
+.SH OPTIONS
+.TP
+\-u (unweighted) to switch off weighting and optimize for intersection
+cardinality;
+.TP
+\-w select weighting based on based on p-values
+.TP
+\-v verbous output
+.TP
+\-c scaffold cutoff scoring
+.TP
+\-r include reverse complemented matches (default)
+.TP
+\-f do not report matches in the reverse complement
+.TP
+\-s <prefixlength> <suffixlength> to extend extraction of result
+sequences by a specified number of nucleotides
+.TP
+\-S use simplified output (leave out aligned query sequences and print
+   reverse sequences for reverse matches) output produced with -S can
+   be plugged into alignment programs such as clustalw immediately,
+   but is less legible.
+
+.SH EXIT STATUS
+fragrep returns non zero if a failure occured, zero otherwise.
+
+.SH PATTERN FILES
+
+Pattern files are preferrably created using aln2pattern.
+
+.SH SEE ALSO
+
+aln2pattern, pattern2eps
+
+.SH AUTHORS
+Axel Mosig, CAS-MPG Partner Institute for Computational Biology,
+Shanghai, China
+
+Peter F. Stadler, Katrin Sameith, Bioinformatics Group,
+University of Leipzig, Germany. 
+
+Email:axel (at) picb.ac.cn
+
+.SH URL
+www.bioinf.uni-leipzig.de/Software/fragrep
+

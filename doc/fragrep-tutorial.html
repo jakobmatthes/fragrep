@@ -1,0 +1,204 @@
+<HTML>
+<HEAD>
+<TITLE>fragrep Documentation: Tutorial</TITLE>
+<LINK HREF="fragrep.css" REL="stylesheet" TYPE="text/css">
+</HEAD>
+<BODY BGCOLOR="#FFFFE5" STYLE="{margin-left:12}">
+<CENTER>
+<SMALL>
+<B><b>fragrep Tutorial</b></B>
+<HR>
+</SMALL>
+</CENTER>
+
+<!-- <div class="qindex"><a class="qindexHL" href="index.html">Main&nbsp;Page</a> | <a class="qindex" href="namespaces.html">Namespace List</a> | <a class="qindex" href="annotated.html">Class&nbsp;List</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindex" href="namespacemembers.html">Namespace&nbsp;Members</a> | <a class="qindex" href="functions.html">Class&nbsp;Members</a> | <a class="qindex" href="globals.html">File&nbsp;Members</a></div>-->
+
+<h1></h1>
+<center>
+<h3>Homology Search with Fragmented Nucleic Acid Sequence Patterns using <code>fragrep</code></h3>
+</center>
+
+
+<p>
+<a name="introduction"><h2> Introduction </h2></a>
+
+The <code>fragrep</code> tool was developed to detect distant
+homologous sequences that exhibit a commonly observed fragmented
+conservation pattern. <code>fragrep</code> is equipped with a
+collection of other tools, most notably <code>aln2pattern</code> for
+extracting homology patterns from multiple sequence alignments as well
+as visualization of the homology patterns.
+
+<a name="introduction"><h2> Creating a Search Pattern </h2></a>
+
+A typical starting point for creating PWM-based search patterns is a
+multiple sequence alignment. Often, when dealing with the aligned
+members of a non-coding RNA family, these alignments exhibit certain
+conserved blocks. The tool <code>aln2pattern</code> relies on manual
+identification and annotation of these blocks and converts them into a
+search pattern that can be used by <code>fragrep</code>. 
+
+The following example shows an alignment of YRNA sequences from
+different vertebrate species. By visual inspection, we easily identify
+two conserved blocks that we annotate in a separate line
+labelled <code>fragrep</code> in the alignment:<br><br>
+
+<table width="100%" cellpadding="10"><tr><td class="xmpcode" bgcolor="#FFFFFF">
+<small>
+<code>
+CLUSTALW<br>
+<br>
+Ta_gut_Y1       GGCTGGTCCGAAGGTAGTGGGGTATCTCAATTGATTGTTCACAGTCAGTTACAGATTGATCTCCTTGTTCT-CTCTTTCCCC--CCTTCCCACTACTGCACTCGACTAGTCTTTT---<br>
+Ga_gal_Y1       GGCTGGTCCGAAGGTAGTGGGGTGTCTCAATTGATTGTTCACAGTCAGTTACAGATTGATCTCCTCGTTCT-CTCTTTCCCC--CCTTCCCACTACTGCACTTGACTAGTCTTTT---<br>
+Or_ana_Y1       GGCTAGTCCGAAGGTAGTGAGTTATCACAATTGATTGTTCACAGTCAGTTACAGATCGATATCCCTGTTCT-CTCTTCCTCCCACCTTCTCACTACCGTATTTGACTAGTCTTTT---<br>
+Mo_dom_Y1       GGCTGGTCCGAAGGTAGTGAGTTATCTCAAATGATTGTTCACAGTCAGTTACAGATCGATCTCCTTGTTCT-CTCTTTCCCTC-CCTTCTCACTACTGCACTCGACTAGTCTTTT---<br>
+Tu_tru_Y1       GGCTGGTCCGAAGGTAGTGAGTTATCTCAATTGATTGTTCACAGTCAGTTACAGATCGAACTCCTCGTTCTACTCTTTCCCC--CCTTCTCACTACTGCACTTGACTAGTCTT-----<br>
+Ho_sap_Y1       GGCTGGTCCGAAGGTAGTGAGTTATCTCAATTGATTGTTCACAGTCAGTTACAGATCGAACTCCTTGTTCTACTCTTTCCCC--CCTTCTCACTACTGCACTTGACTAGTCTT-----<br>
+Mu_mus_Y1       GGCTGGTCCGAAGGTAGTGAGTTATCTCAATTGATTGTTCACAGTCAGTTACAGATTGAACTCCT-GTTCTACACTTTCCCC--CCTTCTCACTACTGCACTTGACTAGTCTTTT---<br>
+Sp_tri_Y1       GGCTGGTCCGAAGGTAGTGAGTTATCTCAATTGATTGTTCACAGTCAGTTACAGATTGAACTCCTTGTTCTACTCTTTCCCC--CCTTCTCACTACTGCACTTGACTAGTCTTTT---<br>
+An_car_Y3       GGCTGGTCCGATTGCAGTGGT----------ACTTATAATTAATTGATCACAGTCAGTTACAGGTTTCTTTGTTCTTT---CTCCACTCCCACTGCTTCACTTGACTAGTCTTTT---<br>
+Ta_gut_Y3       GGCTGGTCCGATGGCAGTGGT----------ATTTA----TAATTGATCACAGTCAGTTACAGATTTCTTTGTTCTTT---CTCCACACCCACTGCTGCACTTGACTAGTCTTTT---<br>
+Ga_gal_Y3       GGCTGGTCCGATGGCAATGGC----------ATTTATAA-TAATTGATCACAGTCCGTTACAGATTTCTTTGCTCTTT---CTCCACTCCCACTGCTGCATTTGACTAGTCTTTT---<br>
+Or_ana_Y3       GGCTGGTCCGAGTGCAGTGGA----------ATTTATAATTAATTGATCACAGTCAGTTACAGATTTCTTTGTTCCTT---CTCCACTCCCACTGCTTCACTTGACTAGTCTTTT---<br>
+Mo_dom_Y3       GGCTGGTCCGATTGCAGTGGT----------AACTCTAATTAATTGATTACAGTCAGTTACAGATTTCTTTGTTCTTT---CTCCGCTCCCACTGCTTCACTTGACTAGTCTTTT---<br>
+Tu_tru_Y3       GGCTGGTCCGCGTGCAGTGGT----------GTTTACAATTAATTGATCACAGCCAGTTACAGATTTC-TTGTTCCTT---CTCCACTCCCACTGCTTCACTTGACTAGCCTTTT---<br>
+Ho_sap_Y3       GGCTGGTCCGAGTGCAGTGGT----------GTTTACAACTAATTGATCACAACCAGTTACAGATTTCTTTGTTCCTT---CTCCACTCCCACTGCTTCACTTGACTAGCCTT-----<br>
+Sp_tri_Y3       GGCTGGTCCGAGTGCAGTGGT----------GTTTACAACTAATTGATCACAACCAGTTACAGATTTCTTTGTTCCTT---CTCCACTCCCACTGCTTCACTTGACTAGCCTTTT---<br>
+Mu_mus_Y3       GGTTGGTCCGAGAGTAGTGGT----------GTTTACAACTAATTGATCACAACCAGTTACAGATTTCTTTGTTCCTT---CTCCGCTCCCACTGCTTCACTTGACCAGCCTTTT---<br>
+Lo_afr_Y3       GGCTGGTCCGAGTGCAGTGTG--------AGGCTTACAACTAATTGATCACAACCAGTTACAGATTCCTTTGTTCCTT---CTCCACTCCCACTGCTTCACTAGACCGGTCTTTT---<br>
+An_car_Y4       GGCTGGTCCGAAAGTAGTGGGTTACCA----------CAGAAATTATTACAGTT-AGTTTCACTAACCTTTCTAAGT-----TCCA-CCCCACTGCTAACCTTGACTGGTCTCCTTTT<br>
+Ta_gut_Y4       GGCTGGTCCGATGGTAGTGGGTAGT------------CAGAAATTATTACTGCT-ACTTAAGCTAACCTTTCTATAT-----TCCA-CCCCACTGCTAACCTCGACTGGTCTTT----<br>
+Or_ana_Y4       GGCTGGTCCGATAGTAGTGGGTGCC------------CAGAACTCTTTAATAT--AGTTTCACTAAACTTGGTATAT-----TCCA-CCTCACTGCTAAACTTGACTGGCCTTTT---<br>
+Mo_dom_Y4       GGCTGGTCCGATGGCAGTGGTTTAC------------CAGAACTTATTGATATT-AGTTTCACAACAAGTTAATATAT----TCCACCCCCACTGCTAAATTTGACTGGCCTTTT---<br>
+Tu_tru_Y4       GGCTGGTCCGATGGTAGTGGGTTAC------------CAGAACTTATTAACGTT-AGTGTCACTAAAGTTGGTATACAA----CC--CCCCACTGCTAAATTTGACTAGCTTT-----<br>
+Lo_afr_Y4       GGCTGGTCCGATGGCAGTGGGTTAT------------CAGAACTTATTAACGTT-AGTGTCACTAAAGTTGGTATACAA----CC-CCCCCACTGCTGAATTTGACTGGCTTTTT---<br>
+Ho_sap_Y4       GGCTGGTCCGATGGTAGTGGGTTAT------------CAGAACTTATTAACATT-AGTGTCACTAAAGTTGGTATACAA----CC--CCCCACTGCTAAATTTGACTGGCTTT-----<br>
+Sp_tri_Y4       GGCTGGTCCGATGGTAGTGGGTTAT------------CAGAACTTATTAACATT-AGTGTCACTAAAGTTGATATACAA----CC--CCCCACTGCTAAATTTGACTGGCTTTTT---<br>
+FRAGREP&nbsp;&nbsp;         ********************-------------------------------------------------------------------*************************------<br>
+</code>
+</small>
+</td></tr></table>
+<br><br>
+
+This annotated alignment can now be processed
+with <code>aln2pattern</code> to obtain our search pattern that we
+pipe into a file named <code>YRNA.pattern</code>. <br><br>
+<table width="100%" cellpadding="10"><tr><td class="xmpcode" bgcolor="#FFFFFF">
+<code>
+aln2pattern -m YRNA.aln > YRNA.pattern<br>
+</code>
+</td></tr></table>
+<br><br>
+
+The pattern file <code>YRNA.pattern</code> contains a description of
+the annotated columns as a matrix, along with some further constraints
+such as match thresholds and distance constraints between the
+blocks:<br><br>
+
+<table width="100%" cellpadding="10"><tr><td class="xmpcode" bgcolor="#FFFFFF">
+<small>
+<code>
+2 matrices<br>
+   &nbsp;0 &nbsp;0 M0:GGCUGGUCCGADGGYAGUGG 0.93 0<br>
+   47    66 M1:YCCCACURCUKMACUUGACURGYCU 0.89 0<br>
+M0:GGCUGGUCCGADGGYAGUGG<br>
+<table>
+<small>
+<tr><td class="tcode"></td><td class="tcode">   0  </td><td class="tcode">  0  </td><td class="tcode">  0  </td><td class="tcode">  0  </td><td class="tcode">  1  </td><td class="tcode">  0  </td><td class="tcode">  0 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode">  0 </td><td class="tcode">  25 </td><td class="tcode">   9 </td><td class="tcode">   3 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  26 </td><td class="tcode">   1  </td><td class="tcode">  0  </td><td class="tcode">  0 </td><td class="tcode">   6 </td></tr>
+<tr><td class="tcode"></td><td class="tcode">   0  </td><td class="tcode">  0  </td><td class="tcode"> 25  </td><td class="tcode">  0  </td><td class="tcode">  0  </td><td class="tcode">  0  </td><td class="tcode">  0 </td><td class="tcode">  26 </td><td class="tcode">  26  </td><td class="tcode">  0 </td><td class="tcode">   1 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  11 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode">  0  </td><td class="tcode">  0 </td><td class="tcode">   0 </td></tr>
+<tr><td class="tcode"></td><td class="tcode">  26  </td><td class="tcode"> 26  </td><td class="tcode">  0  </td><td class="tcode">  0  </td><td class="tcode"> 25  </td><td class="tcode"> 26  </td><td class="tcode">  0 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode"> 26 </td><td class="tcode">   0 </td><td class="tcode">   6 </td><td class="tcode">  16 </td><td class="tcode">  26 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  25  </td><td class="tcode">  0  </td><td class="tcode"> 26 </td><td class="tcode">  19 </td></tr>
+<tr><td class="tcode"></td><td class="tcode">   0  </td><td class="tcode">  0  </td><td class="tcode">  1  </td><td class="tcode"> 26  </td><td class="tcode">  0  </td><td class="tcode">  0  </td><td class="tcode"> 26 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode">  0 </td><td class="tcode">   0 </td><td class="tcode">  11 </td><td class="tcode">   7 </td><td class="tcode">   0 </td><td class="tcode">  15 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode"> 26  </td><td class="tcode">  0 </td><td class="tcode">   1 </td></tr>
+<tr><td class="tcode">#</td><td class="tcode">  G  </td><td class="tcode">  G  </td><td class="tcode">  C  </td><td class="tcode">  U  </td><td class="tcode">  G  </td><td class="tcode">  G  </td><td class="tcode">  U </td><td class="tcode">   C </td><td class="tcode">   C  </td><td class="tcode">  G </td><td class="tcode">   A </td><td class="tcode">   D </td><td class="tcode">   G </td><td class="tcode">   G </td><td class="tcode">   Y </td><td class="tcode">   A </td><td class="tcode">   G  </td><td class="tcode">  U  </td><td class="tcode">  G </td><td class="tcode">   G </td></tr>   
+</small>
+</table>
+M1:YCCCACURCUKMACUUGACURGYCU<br>
+<table>
+<small>
+<tr><td class="tcode"></td><td class="tcode">    1 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  26 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode">  8 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode">  7 </td><td class="tcode">   8 </td><td class="tcode">  24 </td><td class="tcode">   0  </td><td class="tcode">  0  </td><td class="tcode">  1 </td><td class="tcode">   0 </td><td class="tcode">  26 </td><td class="tcode">   0  </td><td class="tcode">  0 </td><td class="tcode">  18 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td></tr> 
+<tr><td class="tcode"></td><td class="tcode">    8 </td><td class="tcode">  26 </td><td class="tcode">  19 </td><td class="tcode">  26 </td><td class="tcode">   0 </td><td class="tcode">  26 </td><td class="tcode">   0  </td><td class="tcode">  0 </td><td class="tcode">  26 </td><td class="tcode">   1  </td><td class="tcode">  0 </td><td class="tcode">  17 </td><td class="tcode">   2 </td><td class="tcode">  19  </td><td class="tcode">  0  </td><td class="tcode">  3 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  26  </td><td class="tcode">  2 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  10 </td><td class="tcode">  22 </td><td class="tcode">   0 </td></tr>
+<tr><td class="tcode"></td><td class="tcode">    0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode"> 18 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode"> 11 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode">  0  </td><td class="tcode">  0 </td><td class="tcode">  26 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode">  0 </td><td class="tcode">   8 </td><td class="tcode">  26 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td></tr>
+<tr><td class="tcode"></td><td class="tcode">   17 </td><td class="tcode">   0 </td><td class="tcode">   7 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  26  </td><td class="tcode">  0 </td><td class="tcode">   0 </td><td class="tcode">  25  </td><td class="tcode">  8 </td><td class="tcode">   1 </td><td class="tcode">   0 </td><td class="tcode">   7  </td><td class="tcode"> 26  </td><td class="tcode"> 22 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">   0  </td><td class="tcode"> 24 </td><td class="tcode">   0 </td><td class="tcode">   0 </td><td class="tcode">  16 </td><td class="tcode">   4 </td><td class="tcode">  26 </td></tr>
+<tr><td class="tcode">#</td><td class="tcode">   Y </td><td class="tcode">   C </td><td class="tcode">   C </td><td class="tcode">   C </td><td class="tcode">   A </td><td class="tcode">   C </td><td class="tcode">   U  </td><td class="tcode">  R </td><td class="tcode">   C </td><td class="tcode">   U  </td><td class="tcode">  K </td><td class="tcode">   M </td><td class="tcode">   A </td><td class="tcode">   C  </td><td class="tcode">  U  </td><td class="tcode">  U </td><td class="tcode">   G </td><td class="tcode">   A </td><td class="tcode">   C  </td><td class="tcode">  U </td><td class="tcode">   R </td><td class="tcode">   G </td><td class="tcode">   Y </td><td class="tcode">   C </td><td class="tcode">   U </td></tr>   
+</small>
+</table>
+</code>
+</td></tr></table><br><br>
+
+The different parameters represent the <i>least constraint parameters
+that yield a match for all sequences in the original alignment</i>:
+The first block is required to mathc with a score of .93 and 0
+insertions or deletions, where the possible match scores range between
+0 and 1; the number of insertions can be any non-negative
+integer. Further contraints are given through the values 47 and 66
+given in front of the second pattern. These specifiy a lower bound and
+an upper boudn on the number of nucleotides between the two blocks.<br><br>
+
+Note that a graphical representation of the pattern created
+by <code>aln2pattern</code> can be found in the
+file <tt>aln2pattern.eps</tt>. Postscript output can also be created
+from any valid <code>fragrep</code> file using the
+tool <code>pattern2eps</code>.
+
+<a name="introduction"><h2> Searching for Matches </h2></a>
+
+The pattern created above can be readily used to start a fragrep
+seearch. Imagine, however, we want to search a genome that is
+phylogenetically divergent from all the sequences that were given in
+the alignment <code>YRNA.aln</code>. For this case, we can tune the
+parameters for more fault tolerance, for instance by modifying the
+first three lines to<br><br>
+
+<table width="100%" cellpadding="10"><tr><td class="xmpcode" bgcolor="#FFFFFF">
+<small>
+<code>
+2 matrices<br>
+   &nbsp;0 &nbsp;0 M0:GGCUGGUCCGADGGYAGUGG 0.9 1<br>
+   30    80 M1:YCCCACURCUKMACUUGACURGYCU 0.8 1<br>
+M0:GGCUGGUCCGADGGYAGUGG<br>
+</code>
+</small>
+</td></tr></table>
+<br><br>
+
+We use this modified version of <code>YRNA.pattern</code> to start
+a <code>fragrep</code> search, using option <code>-q</code> to avoid
+reporting redundant matches:<br><br>
+
+<table width="100%" cellpadding="10"><tr><td class="xmpcode" bgcolor="#FFFFFF">
+<code>
+fragrep -q YRNA.pattern X.fa<br>
+</code>
+</td></tr></table>
+<br><br>
+
+This query indeed yields the following match that can be processed
+further to test for suitable RNA secondary structure, eventually
+characteristic promoter sequences, or other evidience of a functional
+ncRNA gene.<br><br>
+
+<table width="100%" cellpadding="10"><tr><td class="xmpcode" bgcolor="#FFFFFF">
+<code>
+>X-fwd:pos780 weight=11.0799 p-value=1.54188e-05
+ TAGTGGTCCGATGGTAGTGGGTTATCAGAACTTATTAACATTAGTGTCACTAAAGAAGTCTTGATATACAACCCCCCACTGCTAAATTTGACTAGCT
+>matchsequence
+ GG-UGGUCCGAWKGYAGUGG-----------------------------------------------------YCYCACURCUDMAYUUGACURGCU
+</code>
+</td></tr></table>
+<br><br>
+
+
+<a name="references"><h2>References</h2></a>
+
+Axel Mosig, Julian Chen, Peter F. Stadler,
+<i>Homology Search with Fragmented Nucleic Acid Sequence Patterns</i>,
+Proc. Worksh. Alg. Bioinf. (WABI), 2007.<br>
+
+<CENTER> <SMALL>
+<B>fragrep Tutorial</B><BR>
+Axel Mosig, PICB Shanghai
+</SMALL>
+</CENTER>
+
+</BODY>
+
+</HTML>
