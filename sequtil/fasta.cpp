@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <algorithm>
 #include "fasta.h"
 #include "bbq_util.h"
 

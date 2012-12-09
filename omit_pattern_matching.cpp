@@ -1,6 +1,8 @@
 // bbq - Copyright (C) 2005, Axel Mosig, University of Leipzig. See
 // main.cpp for details.
 
+#include <cstring>
+
 #include <limits.h>
 #include <float.h>
 #include <stdlib.h>

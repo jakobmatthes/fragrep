@@ -6,6 +6,10 @@
 #include <limits>
 #include <float.h>
 #include <iomanip>
+#include <cstring>
+#include <cstdlib>
+#include <algorithm>
+#include <climits>
 
 #ifdef USE_GSL
 #include <gsl/gsl_randist.h>

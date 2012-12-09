@@ -1,3 +1,5 @@
+#include <cstring>
+#include <cstdlib>
 #include <sequtil/alignment_reader.hpp>
 #include "pattern_matching.h"
 #include <sequtil/bbq_util.h>

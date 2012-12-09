@@ -2,6 +2,8 @@
   fragrep c++ rebuild */
 
 // std and iostream headers
+#include <cstring>
+#include <cstdlib>
 #include <ctype.h>
 #include <iostream>
 #include <fstream>

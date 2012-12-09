@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include "math.h"
+#include <algorithm>
 
 namespace fragrep
 {
